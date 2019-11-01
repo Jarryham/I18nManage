@@ -1,0 +1,18 @@
+export default {
+  '.-overview-monitor.monitor.trading-activity': '活动实时交易情况',
+  '.-overview-monitor.monitor.total-transactions': '今日交易总额',
+  '.-overview-monitor.monitor.sales-target': '销售目标完成率',
+  '.-overview-monitor.monitor.remaining-time': '活动剩余时间',
+  '.-overview-monitor.monitor.total-transactions-per-second': '每秒交易总额',
+  '.-overview-monitor.monitor.activity-forecast': '活动情况预测',
+  '.-overview-monitor.monitor.efficiency': '券核效率',
+  '.-overview-monitor.monitor.ratio': '跳出率',
+  '.-overview-monitor.monitor.proportion-per-category': '各品类占比',
+  '.-overview-monitor.monitor.fast-food': '中式快餐',
+  '.-overview-monitor.monitor.western-food': '西餐',
+  '.-overview-monitor.monitor.hot-pot': '火锅',
+  '.-overview-monitor.monitor.waiting-for-implementation': 'Waiting for implementation',
+  '.-overview-monitor.monitor.popular-searches': '热门搜索',
+  '.-overview-monitor.monitor.resource-surplus': '资源剩余',
+  '.-overview-monitor.monitor.fund-surplus': '补贴资金剩余',
+};

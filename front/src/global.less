@@ -1,0 +1,77 @@
+@import '~antd/es/style/themes/default.less';
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.colorWeak {
+  filter: invert(80%);
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+
+canvas {
+  display: block;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+@font-face {
+  font-family: 'PingFang Medium';
+  src: url('./fonts/PingFangMedium.ttf')
+}
+
+@font-face {
+  font-family: 'PingFang Light';
+  src: url('./fonts/fanzhen.ttf')
+}
+@media (max-width: @screen-xs) {
+  .ant-table {
+    width: 100%;
+    overflow-x: auto;
+    &-thead > tr,
+    &-tbody > tr {
+      > th,
+      > td {
+        white-space: pre;
+        > span {
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+// 指示器
+.techyc-tooltip {
+  padding: 5px 0px;
+  color: #1f1f1f;
+  font-size: 12px;
+}
+.techyc-tooltip-title {
+  padding: 0 15px;
+  height: 30px;
+  line-height: 24px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e4e3e9;
+}
+.techyc-tooltip-list {
+  padding: 0 15px;
+  height: 35px;
+  line-height: 35px;
+  box-sizing: border-box;
+}
+
