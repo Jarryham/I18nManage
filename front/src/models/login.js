@@ -1,7 +1,7 @@
 import { routerRedux } from 'dva/router';
 import { stringify } from 'querystring';
 import { fakeAccountLogin, getFakeCaptcha } from '@/services/login';
-import { setAuthority } from '@/utils/authority';
+import { setAuthority, setUserStorage } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 const Model = {
   namespace: 'login',
@@ -15,7 +15,6 @@ const Model = {
         type: 'changeLoginStatus',
         payload: response,
       }); // Login successfully
-
       if (response.status === 'ok') {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
@@ -23,10 +22,8 @@ const Model = {
 
         if (redirect) {
           const redirectUrlParams = new URL(redirect);
-
           if (redirectUrlParams.origin === urlParams.origin) {
             redirect = redirect.substr(urlParams.origin.length);
-
             if (redirect.match(/^\/.*#/)) {
               redirect = redirect.substr(redirect.indexOf('#') + 1);
             }
@@ -35,7 +32,6 @@ const Model = {
             return;
           }
         }
-
         yield put(routerRedux.replace(redirect || '/'));
       }
     },
@@ -62,6 +58,7 @@ const Model = {
   reducers: {
     changeLoginStatus(state, { payload }) {
       setAuthority(payload.currentAuthority);
+      setUserStorage(payload);
       return { ...state, status: payload.status, type: payload.type };
     },
   },

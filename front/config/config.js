@@ -123,17 +123,20 @@ export default {
             {
               name: 'analysis',
               path: '/overview/analysis',
+              icon: 'smile',
               component: './overview/analysis',
             },
             {
               name: 'monitor',
               path: '/./overview/monitor',
+              icon: 'smile',
               component: '././overview/monitor',
             },
             {
-              name: 'traffic',
-              path: '/traffic',
-              component: './Traffic',
+              name: 'i18n',
+              path: '/i18n',
+              icon: 'smile',
+              component: './I18nCfg',
             },
             {
               component: './404',
@@ -155,7 +158,11 @@ export default {
   },
   define: {
     ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
-      ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION || '', // preview.pro.ant.design only do not use in your production ; preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
+      ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION || '',
+    // preview.pro.ant.design only do not use in your production ; preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
+    'process.env': {
+      API_ENV: process.env.API_ENV,
+    },
   },
   ignoreMomentLocale: true,
   lessLoaderOptions: {
@@ -190,14 +197,11 @@ export default {
   manifest: {
     basePath: '/',
   },
-  chainWebpack: webpackPlugin,
-  /*
-  proxy: {
-    '/server/api/': {
-      target: 'https://preview.pro.ant.design/',
-      changeOrigin: true,
-      pathRewrite: { '^/server': '' },
-    },
-  },
-  */
+  chainWebpack: webpackPlugin, // proxy: {
+  //   '/api': {
+  //     target: 'http://10.1.1.232/data',
+  //     changeOrigin: true,
+  //     pathRewrite: { '^/api': '' },
+  //   },
+  // }
 };

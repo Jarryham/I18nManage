@@ -15,14 +15,14 @@ exports.login = function(req,res,next) {
 
     userModel.findUserByUsername(params.userName, (err, result) => {
       if(err) next(err);
-      if(result.length === 0) {
+      if(!result || result.length === 0) {
         res.send({
           status: false,
           msg: '用户不存在'
         })
       } else {
         var currentUser = result[0]
-        if (password === currentUser.password) {
+        if (password == currentUser.password) {
           let _id = currentUser.id.toString();
           let jwt = new JwtUtil(_id);
           let token = jwt.generateToken();
@@ -31,6 +31,8 @@ exports.login = function(req,res,next) {
               status: 'ok',
               type: "account",
               currentAuthority: 'admin',
+              id: currentUser.id,
+              account: currentUser.account,
               token
           })
         }
@@ -44,7 +46,17 @@ exports.login = function(req,res,next) {
 
 exports.currentUser = function(req, res, next) {
   const userForm = req.body
-  res.send({
-    status: false
-  })
+  let token = req.header('Authorization');
+  var tokenObj
+  if (token && token !== '') {
+    tokenObj = JSON.parse(token)
+    res.send({
+      status: 'ok',
+      userid: tokenObj.id
+    })
+  } else {
+    res.send({
+      status: false
+    })
+  }
 }

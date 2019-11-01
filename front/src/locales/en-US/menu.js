@@ -1,11 +1,10 @@
 export default {
   'menu.welcome': 'Welcome',
   'menu.chartModel': 'Charts',
-  'menu.analysis': 'Analysis',
-  'menu.traffic': 'Traffic',
   'menu.more-blocks': 'More Blocks',
-  'menu.monitor': 'Monitor',
+  'menu.i18n': 'Language',
   'menu.home': 'Home',
+  'menu.topo': 'Topo',
   'menu.login': 'Login',
   'menu.register': 'Register',
   'menu.register.result': 'Register Result',

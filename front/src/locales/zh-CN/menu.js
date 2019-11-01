@@ -1,8 +1,9 @@
 export default {
   'menu.welcome': '欢迎',
   'menu.chartModel': '图表示例',
+  'menu.topo': '拓扑编辑',
+  'menu.i18n': '国际化',
   'menu.analysis': '首页',
-  'menu.traffic': '链路流量',
   'menu.monitor': '实时监控',
   'menu.more-blocks': '更多区块',
   'menu.home': '首页',

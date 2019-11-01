@@ -1,7 +1,7 @@
 export default {
   navTheme: 'dark',
   primaryColor: '#1890FF',
-  layout: 'topmenu',
+  layout: 'leftmenu',
   contentWidth: 'Fluid',
   fixedHeader: false,
   autoHideHeader: false,
@@ -13,8 +13,17 @@ export default {
   title: 'Ant Design Pro',
   pwa: false,
   iconfontUrl: '',
+  apiConfig: {
+    // 开发环境
+    dev: {
+      BASE_API: 'http://10.1.1.47:9999/',
+    },
+    // 生产环境
+    build: {
+      BASE_API: '',
+    },
+  },
 };
-
 
 // {
 //   "navTheme": "dark",

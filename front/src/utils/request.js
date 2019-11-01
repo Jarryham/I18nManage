@@ -3,7 +3,9 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
+import { getUserStorage } from '@/utils/authority';
 import { notification } from 'antd';
+import apiConfig from '../../config/defaultSettings';
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
@@ -49,8 +51,38 @@ const errorHandler = error => {
  */
 
 const request = extend({
+  prefix: apiConfig.apiConfig[process.env.API_ENV].BASE_API,
   errorHandler,
   // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
 });
+
+request.interceptors.request.use((url, options) => {
+  const userToken = getUserStorage();
+  options.headers['Authorization'] = userToken;
+  return {
+    options: { ...options },
+  };
+});
+
+// request.interceptors.request.use((url, options) => {
+//   console.log(options)
+//   const payload = options.payload
+//   if (payload) {
+//     if (payload.type === 'form') {
+//       options.headers['Content-Type'] = payload.contentType
+//     } else if (payload.type === 'json') {
+//       options.headers['Content-Type'] = payload.contentType
+//     }
+//   } else {
+//     // 修改请求数据格式
+//     // config.data = qs.stringify(config.data)
+//   }
+//   return (
+//     {
+//       options: { ...options, interceptors: true },
+//     }
+//   );
+// });
+
 export default request;
