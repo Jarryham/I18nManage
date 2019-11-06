@@ -44,3 +44,10 @@ exports.qureyAll = function(callback) {
 // exports.updateInfoById = (picPath,userId,callback) => {
 //   db.query('update users set pic = ? where id = ?',[picPath,userId],callback)
 // }
+
+/**
+ * 查询数据库列表
+ */
+exports.queryDbs = function(callback) {
+  db.query('select `id`, `host`, `dbPort`, `database` from i18n_databases', [], callback)
+}

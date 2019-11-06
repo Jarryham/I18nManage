@@ -18,6 +18,7 @@ router.get("/api/currentUser", Users.currentUser);
 
 router.get("/api/getI18n", i18n.qureyI18n);
 router.get("/api/i18ndb", i18n.db)
+router.get("/api/DbList", i18n.dbList)
 
 // app.get("/:id",testModel.test);
 router.post('/data', sqlModel.sqlResolve)

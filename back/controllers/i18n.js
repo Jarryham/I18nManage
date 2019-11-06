@@ -98,7 +98,6 @@ exports.qureyI18n = (req, res, next) => {
 }
 
 exports.db = function(req, res) {
-  console.log(dbData.configPool.config.connectionConfig)
   res.json({
     status: 'ok',
     data: {
@@ -106,5 +105,15 @@ exports.db = function(req, res) {
      port: dbData.configPool.config.connectionConfig.port,
      database: dbData.configPool.config.connectionConfig.database
     }
+  })
+}
+
+exports.dbList = function(req, res, next) {
+  i18nDb.queryDbs(function(err, result) {
+    if (err) next(err);
+    res.send({
+      status: 'ok',
+      data: result
+    })
   })
 }
