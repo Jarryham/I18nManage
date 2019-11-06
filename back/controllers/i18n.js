@@ -1,5 +1,12 @@
 var i18nDb = require('../models/i18n')
+var dbData = require('../config/db')
 
+//
+const dbmsg = {
+  host: dbData.configPool.config.connectionConfig.host,
+  port: dbData.configPool.config.connectionConfig.port,
+  database: dbData.configPool.config.connectionConfig.database
+}
 // 获取客户端ip
 var get_client_ip = function(req) {
   var ip = req.headers['x-forwarded-for'] ||
@@ -23,13 +30,24 @@ exports.save = (req,res,next) =>{
       if (paramObj.id && paramObj.id !== '') {
         i18nDb.qureyItem(paramObj.id, function(err, queryRes) {
           if (err) next(err);
-          historySave = queryRes
+          historySave = JSON.stringify(queryRes[0])
           // 开始修改
-          console.log(req.session, 'ssssss')
           i18nDb.EditI18nItem(paramObj, function(err, result) {
             if(err) next(err);
             // 修改成功  写入记录
-            console.log(req.cookies)
+            const time = new Date().getTime()
+            i18nDb.addLog({
+              time: parseInt(time/1000),
+              history: historySave,
+              current: str,
+              userId: 1,
+              ip: ip, 
+              type: 'edit', 
+              database: `${dbmsg.host}:${dbmsg.port}/${dbmsg.database}`,
+              target_id: paramObj.id
+            }, function(err2, editRes) {
+              
+            })
             // console.log(req, 'req')
             // console.log(result)
           })
@@ -47,7 +65,6 @@ exports.qureyI18n = (req, res, next) => {
   var str = ''
   req.on("data",function(chunk){  str+=chunk  })
   req.on("end", function() {
-    console.log(req.session, 'ssssss')
     if(str !== '') {
       var paramObj = JSON.parse(str)
       if (paramObj.id) {
@@ -77,5 +94,17 @@ exports.qureyI18n = (req, res, next) => {
       })
     }
     
+  })
+}
+
+exports.db = function(req, res) {
+  console.log(dbData.configPool.config.connectionConfig)
+  res.json({
+    status: 'ok',
+    data: {
+     host: dbData.configPool.config.connectionConfig.host,
+     port: dbData.configPool.config.connectionConfig.port,
+     database: dbData.configPool.config.connectionConfig.database
+    }
   })
 }

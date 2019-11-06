@@ -13,7 +13,7 @@ const Model = {
 
       yield put({
         type: 'save',
-        payload: response,
+        payload: { i18n: response.data },
       });
     },
     *fetchDb(_, { call, put }) {

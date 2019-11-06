@@ -27,6 +27,7 @@ let flowPool = mysql.createPool({
 //         callback(err,results)
 //     })
 // }
+db.configPool = pool
 
 db.query=function query(sql, sqlParams, callback, type) {
   var sqlpool = pool

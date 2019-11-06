@@ -39,6 +39,7 @@ app.use(function (req, res, next) {
   if (req.url != '/api/login/account' && req.url != '/user/register') {
       let token = req.header('Authorization');
       var tokenObj
+      console.log(token)
       if (token && token !== '') {
         tokenObj = JSON.parse(token)
         let jwt = new JwtUtil(tokenObj.token);
@@ -49,10 +50,10 @@ app.use(function (req, res, next) {
             res.send({status: 403, msg: '登录已过期,请重新登录'});
             // res.render('login.html');
         } else {
-            res.send({status: 403, msg: '登录已过期,请重新登录'});
+            next();
         }
       } else {
-
+        res.send({status: 403, msg: '登录已过期,请重新登录'});
       }
   } else {
       next();

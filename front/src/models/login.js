@@ -21,6 +21,7 @@ const Model = {
         let { redirect } = params;
 
         if (redirect) {
+          console.log('111');
           const redirectUrlParams = new URL(redirect);
           if (redirectUrlParams.origin === urlParams.origin) {
             redirect = redirect.substr(urlParams.origin.length);
@@ -28,10 +29,12 @@ const Model = {
               redirect = redirect.substr(redirect.indexOf('#') + 1);
             }
           } else {
+            console.log('2222');
             window.location.href = redirect;
             return;
           }
         }
+        console.log('3333');
         yield put(routerRedux.replace(redirect || '/'));
       }
     },

@@ -24,13 +24,18 @@ exports.EditI18nItem = function (obj,callback){
   }
 }
 
-exports.addLog = function () {
 
+exports.addLog = function (params, callback) {
+  var sumbmit = {...params}
+  if (params) {
+    db.query('insert into i18_update_log (`time`,`history`,`current`,`userId`,`ip`, `type`, `database`,`target_id`) values (?,?,?,?,?,?,?,?)',[sumbmit.time, sumbmit.history, sumbmit.current, sumbmit.userId, sumbmit.ip, sumbmit.type, sumbmit.database,sumbmit.target_id],callback)
+  }
 }
 
 exports.qureyItem = function(id, callback) {
   db.query('select * from sys_i18n where id = ?', [id], callback)
 }
+
 
 exports.qureyAll = function(callback) {
   db.query('select * from sys_i18n', [], callback)

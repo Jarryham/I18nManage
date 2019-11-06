@@ -1,9 +1,8 @@
 import request from '@/utils/request';
 
 export async function getI18nList(params) {
-  return request('data', {
-    method: 'POST',
-    data: { id: 5 },
+  return request('api/getI18n', {
+    method: 'GET',
   });
 }
 
@@ -15,7 +14,7 @@ export async function submitI18nItem(params) {
 }
 
 export async function getDbMsg() {
-  return request('i18ndb', {
+  return request('api/i18ndb', {
     method: 'get',
   });
 }
