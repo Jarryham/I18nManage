@@ -6,7 +6,7 @@ const config = {
   user: 'root',
   dbPort: 3306,
   password: 'root',
-  database: 'i18n',
+  database: 'center',
   flowbase: {
     connectionLimit: 10, //数据库连接池
     host: '106.54.4.67',

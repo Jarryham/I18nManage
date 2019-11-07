@@ -1,4 +1,5 @@
 const db=require('../config/db');
+const dbAny = require('../config/dbAny'); // 可指定对应的数据库进行查询
 
 /**
  *修改模块
@@ -50,4 +51,41 @@ exports.qureyAll = function(callback) {
  */
 exports.queryDbs = function(callback) {
   db.query('select `id`, `host`, `dbPort`, `database` from i18n_databases', [], callback)
+}
+
+exports.queryDbsById = function(id, callback) {
+  db.query('select * from i18n_databases where id = ?', [id], callback)
+}
+
+/**
+ * 同步信息使用的数据库查询 修改
+ */
+exports.asynEditItem = function(config, params, callback) {
+  var sumbmit = {
+    id: params.id,
+    key: params.key,
+    version: ((params.version === '' || !params.version) ? null : params.version),
+    zh: params.zh,
+    en: params.en,
+    oth: params.oth
+  }
+  if (sumbmit.id && sumbmit.id !== '') {
+    // 修改
+    dbAny(config, 'update sys_i18n set `key` = ?, `version` = ?, `zh` = ?, `en` = ?, `oth` = ? where `id` = ?',[sumbmit.key, sumbmit.version, sumbmit.zh, sumbmit.en, sumbmit.oth, sumbmit.id],callback)
+  } else {
+    // 新增
+    dbAny(config, 'insert into sys_i18n (key,version,zh,en,oth) values (?,?,?,?,?)',[sumbmit.key, sumbmit.version, sumbmit.zh, sumbmit.en, sumbmit.oth],callback)
+  }
+}
+
+exports.asynQueryItem = function(config, id, callback) {
+  dbAny(config, 'select * from sys_i18n where id = ?', [id], callback)
+}
+
+exports.asynQueryI18nList = function(config, callback) {
+  dbAny(config, 'select * from sys_i18n', [], callback)
+}
+
+exports.asynQueryItemByIdWidthDb = function(config, id, callback) {
+  dbAny(config, 'select * from sys_i18n where id = ?', [id], callback)
 }

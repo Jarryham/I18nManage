@@ -39,14 +39,12 @@ app.use(function (req, res, next) {
   if (req.url != '/api/login/account' && req.url != '/user/register') {
       let token = req.header('Authorization');
       var tokenObj
-      console.log(token)
       if (token && token !== '') {
         tokenObj = JSON.parse(token)
         let jwt = new JwtUtil(tokenObj.token);
         let result = jwt.verifyToken();
         // 如果考验通过就next，否则就返回登陆信息不正确
         if (result == 'err') {
-            console.log(result);
             res.send({status: 403, msg: '登录已过期,请重新登录'});
             // res.render('login.html');
         } else {

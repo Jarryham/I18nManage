@@ -16,7 +16,7 @@ router.post("/i18nItemSave", i18n.save);
 
 router.get("/api/currentUser", Users.currentUser);
 
-router.get("/api/getI18n", i18n.qureyI18n);
+router.post("/api/getI18n", i18n.queryI18nListWithDb);
 router.get("/api/i18ndb", i18n.db)
 router.get("/api/DbList", i18n.dbList)
 
