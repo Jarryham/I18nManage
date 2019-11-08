@@ -35,7 +35,7 @@ function updateItem(id, i18nItem, ip, users, callback) {
       database : thisDb.database
     }
     if (thisDb) {
-      i18nDb.asynQueryItem(dbconfig, i18nItem.id, function(err2, i18nitemRes) {
+      i18nDb.asynQueryItemByKeyWidthDb(dbconfig, i18nItem.key, function(err2, i18nitemRes) {
         if (err2) {callback(err2); return;}
         // 查询到指定数据库的原纪录
         var histroyRes = i18nitemRes[0]
@@ -82,7 +82,7 @@ function updateItem(id, i18nItem, ip, users, callback) {
               ip: ip, 
               type: 'add', 
               database: `${dbconfig.host}:${dbconfig.port}/${dbconfig.database}`,
-              target_id: i18nItem.id
+              target_id: editRes ? editRes.insertId : null
             }, function(addlogerr, addRes) {
               if (addlogerr) {
                 callback(addlogerr)
@@ -91,7 +91,7 @@ function updateItem(id, i18nItem, ip, users, callback) {
               }
               
             })
-          })
+          }, 1)
         }
       })
     } else {
@@ -113,34 +113,61 @@ function editcurrentI18n(req, res, next, ip, users) {
         port     : thisDb.dbPort,
         database : thisDb.database
       }
-      i18nDb.asynQueryItemByIdWidthDb(dbconfig, paramObj.id, function(err2, queryRes) {
+      i18nDb.asynQueryItemByIdWidthDb(dbconfig, paramObj.key, function(err2, queryRes) {
         if (err) next(err);
-        // 自身的数据库 所以不用担心找不到id
-        var historySave = JSON.stringify(queryRes[0])
-        i18nDb.asynEditItem(dbconfig, paramObj, function(listerr, list) {
-          const time = new Date().getTime()
-          i18nDb.addLog({
-            time: parseInt(time/1000),
-            history: historySave,
-            current: JSON.stringify(req),
-            userId: users.id,
-            ip: ip, 
-            type: 'edit', 
-            database: `${dbconfig.host}:${dbconfig.port}/${dbconfig.database}`,
-            target_id: paramObj.id
-          }, function(err2, editRes) {
-            if (err2) {
-              res.send({
-                status: 'err', msg: '写入日记失败'
-              })
-            } else {
-              res.send({
-                status: 'ok', msg: '修改成功'
-              })
-            }
+        if (queryRes[0]) {
+          // 自身的数据库 所以不用担心找不到id
+          var historySave = JSON.stringify(queryRes[0])
+          i18nDb.asynEditItem(dbconfig, paramObj, function(listerr, list) {
+            const time = new Date().getTime()
+            i18nDb.addLog({
+              time: parseInt(time/1000),
+              history: historySave,
+              current: JSON.stringify(req),
+              userId: users.id,
+              ip: ip, 
+              type: 'edit', 
+              database: `${dbconfig.host}:${dbconfig.port}/${dbconfig.database}`,
+              target_id: paramObj.id
+            }, function(err2, editRes) {
+              if (err2) {
+                res.send({
+                  status: 'err', msg: '写入日记失败'
+                })
+              } else {
+                res.send({
+                  status: 'ok', msg: '修改成功'
+                })
+              }
+            })
           })
-        })
-
+        } else {
+          i18nDb.asynEditItem(dbconfig, paramObj, function(listerr, list) {
+            const time = new Date().getTime()
+            if (listerr) next(listerr);
+            i18nDb.addLog({
+              time: parseInt(time/1000),
+              history: '',
+              current: JSON.stringify(req),
+              userId: users.id,
+              ip: ip, 
+              type: 'add', 
+              database: `${dbconfig.host}:${dbconfig.port}/${dbconfig.database}`,
+              target_id: list ? list.insertId : null
+            }, function(err2, editRes) {
+              console.log(err2)
+              if (err2) {
+                res.send({
+                  status: 'err', msg: '写入日记失败'
+                })
+              } else {
+                res.send({
+                  status: 'ok', msg: '修改成功'
+                })
+              }
+            })
+          })
+        }
       })
       
     })
@@ -159,38 +186,36 @@ exports.save = (req,res,next) =>{
       var paramObj = JSON.parse(str)
       var historySave = null
       // console.log(paramObj, 'mid')
-      if (paramObj.id && paramObj.id !== '') {
-        if (paramObj.db && paramObj.db.length > 0) {
-          // 需要同步到另外的数据库
-          // 获取id  根据id查询数据库列表信息，建立数据库连接，查询对应的数据字段，存储历史，开始修改，写入记录
-          async.each(paramObj.db, function(db, callback) {
-            updateItem(db, paramObj, ip, users, function(err, res) {
-              if (err) {
-                res.send({
-                  status: 'err', msg: '同步失败'
-                })
-              } else {
-                callback()
-              }
-            })
-          }, function(err) {
-              // if any of the file processing produced an error, err would equal that error
-              if( err ) {
-                // One of the iterations produced an error.
-                // All processing will now stop.
-                res.send({
-                  status: 'err', msg: '同步失败'
-                })
-              } else {
-                 // 最后一步
-                editcurrentI18n(paramObj, res, next, ip, users)
-              }
-          });
+      if (paramObj.db && paramObj.db.length > 0) {
+        // 需要同步到另外的数据库
+        // 获取id  根据id查询数据库列表信息，建立数据库连接，查询对应的数据字段，存储历史，开始修改，写入记录
+        async.each(paramObj.db, function(db, callback) {
+          updateItem(db, paramObj, ip, users, function(err, result) {
+            if (err) {
+              res.send({
+                status: 'err', msg: '同步失败'
+              })
+            } else {
+              callback()
+            }
+          })
+        }, function(err) {
+            // if any of the file processing produced an error, err would equal that error
+            if( err ) {
+              // One of the iterations produced an error.
+              // All processing will now stop.
+              res.send({
+                status: 'err', msg: '同步失败'
+              })
+            } else {
+               // 最后一步
+              editcurrentI18n(paramObj, res, next, ip, users)
+            }
+        });
 
-        } else {
-          editcurrentI18n(paramObj, res, next, ip, users)
-        }
-      }
+      } else {
+        editcurrentI18n(paramObj, res, next, ip, users)
+      }     
   })
   
   // console.log(aid)
@@ -273,6 +298,17 @@ exports.queryI18nListWithDb = function(req, res, next) {
           data: list
         })
       })
+    })
+  })
+}
+
+// 修改日志输出
+exports.logs = function(req, res, next) {
+  i18nDb.logsDb(function(err, result) {
+    if (err) next(err);
+    res.send({
+      status: 'ok',
+      data: result
     })
   })
 }

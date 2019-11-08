@@ -60,7 +60,7 @@ exports.queryDbsById = function(id, callback) {
 /**
  * 同步信息使用的数据库查询 修改
  */
-exports.asynEditItem = function(config, params, callback) {
+exports.asynEditItem = function(config, params, callback, addFlag) {
   var sumbmit = {
     id: params.id,
     key: params.key,
@@ -71,10 +71,17 @@ exports.asynEditItem = function(config, params, callback) {
   }
   if (sumbmit.id && sumbmit.id !== '') {
     // 修改
-    dbAny(config, 'update sys_i18n set `key` = ?, `version` = ?, `zh` = ?, `en` = ?, `oth` = ? where `id` = ?',[sumbmit.key, sumbmit.version, sumbmit.zh, sumbmit.en, sumbmit.oth, sumbmit.id],callback)
+    if (!addFlag) {
+      dbAny(config, 'update sys_i18n set `key` = ?, `version` = ?, `zh` = ?, `en` = ?, `oth` = ? where `id` = ?',[sumbmit.key, sumbmit.version, sumbmit.zh, sumbmit.en, sumbmit.oth, sumbmit.id],callback)
+    } else {
+      // 同步的时候未发现该条记录，需要新增该记录
+      console.log('adddd')
+      dbAny(config, 'insert into sys_i18n (`id`,`key`,`version`,`zh`,`en`,`oth`) values (?,?,?,?,?,?)',[sumbmit.id,sumbmit.key, sumbmit.version, sumbmit.zh, sumbmit.en, sumbmit.oth],callback)
+    }
+    
   } else {
     // 新增
-    dbAny(config, 'insert into sys_i18n (key,version,zh,en,oth) values (?,?,?,?,?)',[sumbmit.key, sumbmit.version, sumbmit.zh, sumbmit.en, sumbmit.oth],callback)
+    dbAny(config, 'insert into sys_i18n (`key`,`version`,`zh`,`en`,`oth`) values (?,?,?,?,?)',[sumbmit.key, sumbmit.version, sumbmit.zh, sumbmit.en, sumbmit.oth],callback)
   }
 }
 
@@ -88,4 +95,12 @@ exports.asynQueryI18nList = function(config, callback) {
 
 exports.asynQueryItemByIdWidthDb = function(config, id, callback) {
   dbAny(config, 'select * from sys_i18n where id = ?', [id], callback)
+}
+
+exports.asynQueryItemByKeyWidthDb = function(config, key, callback) {
+  dbAny(config, 'select * from sys_i18n where `key` = ?', [key], callback)
+}
+
+exports.logsDb = function(callback) {
+  db.query('select  a.`id`, a.`ip`, a.`target_id`, a.`time`, a.`type`, b.`name`, a.`current`, a.`database`, a.`history` from  i18_update_log a left join i18n_accounts b on a.`userId` = b.`id`', [], callback)
 }
